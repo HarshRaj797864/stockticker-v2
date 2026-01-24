@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "scripts": {
+    "ts": "tsx"
+  },
+  "dependencies": {
+    "decimal.js": "^10.6.0",
+    "dotenv": "^17.2.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
