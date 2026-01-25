@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MarketData {
+  symbol    String   @db.VarChar(20)
+  timestamp DateTime @db.Timestamptz(6)
+
+  open  Decimal @db.Decimal(15, 6)
+  high  Decimal @db.Decimal(15, 6)
+  low   Decimal @db.Decimal(15, 6)
+  close Decimal @db.Decimal(15, 6)
+
+  volume BigInt
+
+  // a stock cannot have 2 candles at same timestamp
+  @@id([symbol, timestamp])
+  @@index([symbol, timestamp(sort: Desc)])
+  @@map("market_data")
+}
+
+model AgentLog {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  agentName String @db.VarChar(50)
+
+  context  Json
+  decision String? // BUY HOLD SELL
+
+  @@index([createdAt(sort: Desc)])
+  @@map("agent_logs")
+}
