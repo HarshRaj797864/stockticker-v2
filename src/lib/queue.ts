@@ -13,32 +13,37 @@ export interface JobPayloads {
   };
 }
 
-export class TypedQueue<TData extends Record<string, any>> extends Queue<
-  any,
-  any,
-  string
-> {
-  constructor(name: string, opts?: QueueOptions) {
-    super(name, opts);
+export class TypedQueue extends Queue {
+  constructor(name: string, connection: Redis) {
+    super(name, {connection} as QueueOptions);
   }
 
-  async addJob<K extends keyof TData & string>(
+  async pushJob<K extends keyof JobPayloads>(
     name: K,
-    data: TData[K],
+    data: JobPayloads[K],
     opts?: JobsOptions,
-  ): Promise<Job<TData[K], any, K>> {
-    return super.add(name, data, opts) as any;
+  ): Promise<any> {
+    return super.add(name, data, opts);
   }
 }
 
 
-const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
-const connection = new Redis(REDIS_URL, { maxRetriesPerRequest: null });
+const REDIS_HOST = process.env.REDIS_HOST || "127.0.0.1";
+const REDIS_PORT = Number(process.env.REDIS_PORT) || 6379;
+const connection = new Redis({
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+  maxRetriesPerRequest: null,
+});
 
-const q = new AppQueue<JobPayloads>("my-queue", {connection});
+export const mainQueue = new TypedQueue("agent-queue", connection);
 
 // This works and autocompletes 'ticker' and 'days'
-q.addJob("BacktestJob", { ticker: "TSLA", days: 5 });
+// q.addJob("BacktestJob", { ticker: "TSLA", days: 5 });
 
 // This will now throw a RED error because 'newsSource' doesn't belong to 'BacktestJob'
 // q.addJob("BacktestJob", { ticker: "TSLA", newsSource: "Twitter" });
+export const closeQueue = async () => {
+  await mainQueue.close();
+  await connection.quit();
+}
