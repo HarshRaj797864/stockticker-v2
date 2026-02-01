@@ -1,17 +1,15 @@
-import { vi, beforeAll } from 'vitest';
-import 'dotenv/config';
+import { vi } from 'vitest';
 
-// Global Mocks
 vi.mock('ioredis', () => {
-  return {
-    Redis: vi.fn().mockImplementation(() => ({
+  
+  const Redis = vi.fn(function() {
+    return {
       get: vi.fn(),
       set: vi.fn(),
-      quit: vi.fn(),
-    })),
-  };
-});
+      quit: vi.fn().mockResolvedValue('OK'),
+      on: vi.fn(), 
+    };
+  });
 
-beforeAll(() => {
-  console.log('🧪 Vitest: Global setup initialized.');
+  return { Redis };
 });
