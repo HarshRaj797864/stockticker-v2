@@ -7,7 +7,11 @@
     "migrate:reset": "npx prisma migrate reset",
     "format": "prisma format",
     "generate": "prisma generate",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
@@ -23,9 +27,11 @@
     "@types/ioredis": "^4.28.10",
     "@types/node": "^25.0.10",
     "@types/pg": "^8.16.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "prisma": "^7.3.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }
