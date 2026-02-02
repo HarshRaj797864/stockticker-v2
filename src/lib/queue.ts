@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Queue, Job, type JobsOptions, type QueueOptions } from "bullmq";
-import { Redis } from "ioredis";
+import { createRedisConnection } from "./redis.ts";
 
 export interface JobPayloads {
   BacktestJob: {
@@ -13,9 +13,23 @@ export interface JobPayloads {
   };
 }
 
+// adding defaultoptions
+const defaultOptions: JobsOptions = {
+  attempts: 3,
+  backoff: {
+    type: "exponential",
+    delay: 1000,
+  },
+  removeOnFail: false,
+  removeOnComplete: true,
+};
+
 export class TypedQueue extends Queue {
-  constructor(name: string, connection: Redis) {
-    super(name, {connection} as QueueOptions);
+  constructor(name: string) {
+    super(name, {
+      connection: createRedisConnection(),
+      defaultJobOptions: defaultOptions,
+    } as QueueOptions);
   }
 
   async pushJob<K extends keyof JobPayloads>(
@@ -27,23 +41,9 @@ export class TypedQueue extends Queue {
   }
 }
 
+export const mainQueue = new TypedQueue("agent-queue");
 
-const REDIS_HOST = process.env.REDIS_HOST || "127.0.0.1";
-const REDIS_PORT = Number(process.env.REDIS_PORT) || 6379;
-const connection = new Redis({
-  host: REDIS_HOST,
-  port: REDIS_PORT,
-  maxRetriesPerRequest: null,
-});
-
-export const mainQueue = new TypedQueue("agent-queue", connection);
-
-// This works and autocompletes 'ticker' and 'days'
-// q.addJob("BacktestJob", { ticker: "TSLA", days: 5 });
-
-// This will now throw a RED error because 'newsSource' doesn't belong to 'BacktestJob'
-// q.addJob("BacktestJob", { ticker: "TSLA", newsSource: "Twitter" });
+// await mainQueue.pushJob("BacktestJob", {ticker: "AAPL", days: 23}, defaultOptions)
 export const closeQueue = async () => {
   await mainQueue.close();
-  await connection.quit();
-}
+};
