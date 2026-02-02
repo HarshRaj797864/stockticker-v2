@@ -1,8 +1,10 @@
 import { type Job, Worker } from "bullmq";
 import { createRedisConnection } from "./lib/redis.ts";
 import { type JobPayloads } from "./lib/queue.ts";
+import os from "os";
 
 const connection = createRedisConnection();
+const cpuCount = os.cpus().length;
 
 const worker = new Worker<JobPayloads[keyof JobPayloads]>(
   "agent-queue",
@@ -25,7 +27,7 @@ const worker = new Worker<JobPayloads[keyof JobPayloads]>(
   },
   {
     connection, 
-    concurrency: 5, 
+    concurrency: Math.max(1, cpuCount - 1), 
   }
 );
 // shutdown()
