@@ -1,6 +1,7 @@
 import { it, vi, expect, beforeEach, describe } from "vitest";
 import { backtestController } from "../../controllers/backtest.ts";
 import { Request, Response } from "express";
+import {ZodValidationError} from "../../middleware/errorHandler.ts"
 
 describe("backtestController tests", () => {
   let mockQueue: any;
@@ -33,12 +34,16 @@ describe("backtestController tests", () => {
   });
   it("should throw error with invalid data",async () => {
     const handler = backtestController(mockQueue);
+
     mockRequest = {
       body: { ticker: "AAPL", news: "hello" },
     };
     await handler(mockRequest as Request, mockResponse as Response, next);
     expect(mockQueue.pushJob).not.toHaveBeenCalledWith();
-    // expect(next).toHaveBeenCalledWith(new ZodError);
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith(expect.any(ZodValidationError));
+    const errorPassed = next.mock.calls[0][0];
+    expect(errorPassed.message).toContain("Validation Failed");
   });
   
 });
