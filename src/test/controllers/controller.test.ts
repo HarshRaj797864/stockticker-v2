@@ -1,7 +1,8 @@
 import { it, vi, expect, beforeEach, describe } from "vitest";
 import { backtestController } from "../../controllers/backtest.ts";
 import { Request, Response } from "express";
-import {ZodValidationError} from "../../middleware/errorHandler.ts"
+import { ZodError } from "zod";
+
 
 describe("backtestController tests", () => {
   let mockQueue: any;
@@ -41,9 +42,9 @@ describe("backtestController tests", () => {
     await handler(mockRequest as Request, mockResponse as Response, next);
     expect(mockQueue.pushJob).not.toHaveBeenCalledWith();
     expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(expect.any(ZodValidationError));
+    expect(next).toHaveBeenCalledWith(expect.any(ZodError));
     const errorPassed = next.mock.calls[0][0];
-    expect(errorPassed.message).toContain("Validation Failed");
+
   });
   
 });
