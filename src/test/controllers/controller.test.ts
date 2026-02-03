@@ -4,8 +4,8 @@ import { Request, Response } from "express";
 
 describe("backtestController tests", () => {
   let mockQueue: any;
-  let mockRequest: Partial<any>;
-  let mockResponse: Partial<any>;
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
   let next: any;
 
   beforeEach(() => {
@@ -31,4 +31,5 @@ describe("backtestController tests", () => {
     expect(mockResponse.status).toHaveBeenCalledWith(202);
     expect(next).not.toHaveBeenCalled();
   });
+//   it("should throw error with invalid data");
 });

@@ -1,6 +1,6 @@
 import { it, vi, expect, beforeEach, describe } from "vitest";
 import {z} from "zod";
-import {BackestSchema} from "../../schemas/backtest.ts"
+import {BacktestSchema} from "../../schemas/backtest.ts"
 
 
 describe("backtest schema tests", () => {
@@ -9,7 +9,7 @@ describe("backtest schema tests", () => {
   });
   it("should validate a correct payload", () => {
     const validData = { ticker: "TSLA", days: 30};
-    const result = BackestSchema.safeParse(validData);
+    const result = BacktestSchema.safeParse(validData);
     expect(result.success).toBe(true);
     expect(result.data).toEqual(validData);
   });

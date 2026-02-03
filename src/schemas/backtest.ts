@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const BackestSchema = z.object({
+export const BacktestSchema = z.object({
   ticker: z
     .string()
     .min(1)
@@ -15,4 +15,4 @@ export const BackestSchema = z.object({
 });
 
 // Inferring type via zod interface
-export type BacktestJobPayload = z.infer<typeof BackestSchema>;
+export type BacktestJobPayload = z.infer<typeof BacktestSchema>;
