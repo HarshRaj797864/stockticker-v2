@@ -31,5 +31,14 @@ describe("backtestController tests", () => {
     expect(mockResponse.status).toHaveBeenCalledWith(202);
     expect(next).not.toHaveBeenCalled();
   });
-//   it("should throw error with invalid data");
+  it("should throw error with invalid data",async () => {
+    const handler = backtestController(mockQueue);
+    mockRequest = {
+      body: { ticker: "AAPL", news: "hello" },
+    };
+    await handler(mockRequest as Request, mockResponse as Response, next);
+    expect(mockQueue.pushJob).not.toHaveBeenCalledWith();
+    // expect(next).toHaveBeenCalledWith(new ZodError);
+  });
+  
 });

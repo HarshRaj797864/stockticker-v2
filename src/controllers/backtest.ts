@@ -11,6 +11,6 @@ export const backtestController =
       queue.pushJob("BacktestJob", {ticker, days});
       res.status(202).json({ message: "Accepted", jobId: 1 }); // not sure about jobId here
     } catch (e) {
-      next(e, req, res);
+      next(e);
     }
   };
