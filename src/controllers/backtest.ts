@@ -1,11 +1,14 @@
-interface TypedQueue {
-  pushJob: (name: string, data: any) => Promise<any>;
-}
 import { ZodError } from "zod";
 import { errorHandler } from "../middleware/errorHandler.ts";
 // importing the schema from zod
 import { BacktestSchema } from "../schemas/backtest.ts";
 import { type Request, type Response } from "express";
+import { type JobPayloads } from "../lib/queue.ts";
+
+interface TypedQueue {
+  pushJob: (name: keyof JobPayloads, data: any) => Promise<any>;
+}
+
 export const backtestController =
   (queue: TypedQueue) => async (req: Request, res: Response, next: any) => {
     try {
