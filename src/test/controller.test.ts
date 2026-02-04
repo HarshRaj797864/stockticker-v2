@@ -1,5 +1,5 @@
 import { it, vi, expect, beforeEach, describe } from "vitest";
-import { backtestController } from "../../controllers/backtest.ts";
+import { backtestController } from "../controllers/backtest.ts";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 
