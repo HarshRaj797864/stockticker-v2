@@ -1,6 +1,6 @@
 import { it, vi, expect, beforeEach, describe } from "vitest";
 import {z} from "zod";
-import {BacktestSchema} from "../../schemas/backtest.ts"
+import {BacktestSchema} from "../schemas/backtest.ts"
 
 
 describe("backtest schema tests", () => {
